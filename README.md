@@ -1,2 +1,6 @@
 # DSP
-👉Matlab code for various projects
+
+This repository consists of various projects that involves
+- FSK communication
+- Notch filter
+- Equalizer
