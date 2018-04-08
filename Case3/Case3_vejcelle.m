@@ -6,32 +6,32 @@
 clear; close all; clc
 
 file = load('vejecelle_data.mat');
-fs = file.fs;                       %   Indlæsning af samplerate
-x = file.vejecelle_data;            %   Indlæsning af data fra vejecelle
-N = length(x);                      %   Længde af data fra vejecelle
+fs = file.fs;                       %   IndlÃ¦sning af samplerate
+x = file.vejecelle_data;            %   IndlÃ¦sning af data fra vejecelle
+N = length(x);                      %   LÃ¦ngde af data fra vejecelle
 n = 0:N-1;
 
 x_ubelastet_data = x(1:1000);       %   Ubelastet data fra vejecelle
 x_belastet_data = x(1000:2500);     %   Belastet data fra vejecelle
-N_ubelastet_data = length(x_ubelastet_data); %   Længde af ubelastet data
-N_belastet_data = length(x_belastet_data);   %   Længde af belastet data
+N_ubelastet_data = length(x_ubelastet_data); %   LÃ¦ngde af ubelastet data
+N_belastet_data = length(x_belastet_data);   %   LÃ¦ngde af belastet data
 
 %%  Opgave 1 - Dataanalyse
 
 %   ----- Plot af vejecelle data -----
 figure('name', 'Vejecelle_data')
 plot(x)
-title('Vejecelle input fra sensor med støj'), grid minor
+title('Vejecelle input fra sensor med stÃ¸j'), grid minor
 
-%   1. Beregning af middelværdi, spredning og varians af ubelastet og
-%   belastet (med lod på) tilstand
+%   1. Beregning af middelvÃ¦rdi, spredning og varians af ubelastet og
+%   belastet (med lod pÃ¥) tilstand
 
-%   Beregninger for ubelastet målinger:
+%   Beregninger for ubelastet mÃ¥linger:
 x_mid_ubelastet = sum(x_ubelastet_data)/N_ubelastet_data;
 x_var_ubelastet = sum((x_ubelastet_data-x_mid_ubelastet).^2)/...
     N_ubelastet_data;
 x_stdaflg_ubelastet = sqrt(x_var_ubelastet);
-%   Beregninger for belastet målinger:
+%   Beregninger for belastet mÃ¥linger:
 x_mid_belastet = sum(x_belastet_data)/N_belastet_data;
 x_var_belastet = sum((x_belastet_data-x_mid_belastet).^2)/N_belastet_data;
 x_stdaflg_belastet = sqrt(x_var_belastet);
@@ -45,35 +45,35 @@ x_belastet = x_mid_belastet + x_stdaflg_belastet*randn(1, N_belastet_data);
 figure('name', 'Histogrammer')
 subplot(1, 2, 1)
 histogram(x_ubelastet, Nbins);
-title('Histogram for ubelastet måling'), grid minor
+title('Histogram for ubelastet mÃ¥ling'), grid minor
 subplot(1, 2, 2)
 histogram(x_belastet, Nbins);
-title('Histogram for belastet måling'), grid minor
+title('Histogram for belastet mÃ¥ling'), grid minor
 
-%   3. Plot effektspektre for de to tilstande. Ligner det hvidstøj?
+%   3. Plot effektspektre for de to tilstande. Ligner det hvidstÃ¸j?
 X_ubelastet = fft(x_ubelastet);
 P_ubelastet = X_ubelastet.*conj(X_ubelastet);
 X_belastet = fft(x_belastet);
 P_belastet = X_belastet.*conj(X_belastet);
 
 %   Ser bort fra DC offset, hvorfor der startes fra 1 og ikke 0 og fra 2
-%   på den horisontale akse. DC offsettet ses også bort fra ifm. de
+%   pÃ¥ den horisontale akse. DC offsettet ses ogsÃ¥ bort fra ifm. de
 %   matricer som angiver den ubelastede og den belastede effekt, hvorfor
-%   begge matricer går fra 2 til enden af hver matrice.
-figure('name', 'Effektspektrum, hvidstøj')
+%   begge matricer gÃ¥r fra 2 til enden af hver matrice.
+figure('name', 'Effektspektrum, hvidstÃ¸j')
 subplot(2, 1, 1), plot(1:N_ubelastet_data-1, P_ubelastet(2:end))
-grid minor, title('Effektspektrum for ubelastet målinger')
+grid minor, title('Effektspektrum for ubelastet mÃ¥linger')
 subplot(2, 1, 2), plot(1:N_belastet_data-1, P_belastet(2:end))
-grid minor, title('Effektspektrum for belastet målinger')
+grid minor, title('Effektspektrum for belastet mÃ¥linger')
 
-%   4. Hvad er afstanden imellem bit-niveauer i gram? (dvs. værdi af LSB) 
-%   Den mindste forskel mellem bitniveauer er 1 ift. aflæsning. Dette ses
-%   også beskrevet og indikeret i journalen som dokumenterer dette matlab
+%   4. Hvad er afstanden imellem bit-niveauer i gram? (dvs. vÃ¦rdi af LSB) 
+%   Den mindste forskel mellem bitniveauer er 1 ift. aflÃ¦sning. Dette ses
+%   ogsÃ¥ beskrevet og indikeret i journalen som dokumenterer dette matlab
 %   script.
 
 %%  Opgave 2 - Design af Midlingsfilter
-%   1. Prøv med f.eks. et midlingsfilter med 10, 50, 100
-%   filterkoefficienter(tappe) - plot histogrammer og mål variansen/støj
+%   1. PrÃ¸v med f.eks. et midlingsfilter med 10, 50, 100
+%   filterkoefficienter(tappe) - plot histogrammer og mÃ¥l variansen/stÃ¸j
 %   effekten.
 
 %   Antal filterkoefficienter
@@ -88,7 +88,7 @@ yMA1 = filter(hMA1, 1, x);    %   Filtrering af data fra vejecelle, M=10
 yMA2 = filter(hMA2, 1, x);    %   Filtrering af data fra vejecelle, M=50
 yMA3 = filter(hMA3, 1, x);    %   Filtrering af data fra vejecelle, M=100
 
-%   ----- Støjeffekt og reduktion for belastet og ubelastet -----
+%   ----- StÃ¸jeffekt og reduktion for belastet og ubelastet -----
 midling(hMA1, x_ubelastet_data, M1, N_ubelastet_data, '#Ubelastet');
 midling(hMA2, x_ubelastet_data, M2, N_ubelastet_data, '#Ubelastet');
 damping_ubelastet=midling(hMA3, x_ubelastet_data, M3, N_ubelastet_data,...
@@ -142,21 +142,21 @@ title('MA filter, M=50'), grid minor
 subplot(1, 3, 3), histogram(yMA3, Nbins);
 title('MA filter, M=100'), grid minor
 
-%   2. Et krav til maksimal indsvingningstid kunne være 100 ms til et
-%   praktisk vejesystem. Beregn den maksimale længde af jeres FIR
+%   2. Et krav til maksimal indsvingningstid kunne vÃ¦re 100 ms til et
+%   praktisk vejesystem. Beregn den maksimale lÃ¦ngde af jeres FIR
 %   midlingsfilter. 
 Ts = 1/fs;                  %   Sample periodetid
 G_delay_sek = 100e-3;       %   Group delay i sekunder
 G_delay = G_delay_sek/Ts;   %   Group delay
-N_max = 2*G_delay+1;        %   Maksimal længde ud fra 100ms
-fprintf('\nMaksimal Længde af FIR midlingsfilter: [%d]\n', N_max);
+N_max = 2*G_delay+1;        %   Maksimal lÃ¦ngde ud fra 100ms
+fprintf('\nMaksimal LÃ¦ngde af FIR midlingsfilter: [%d]\n', N_max);
 
-%   3. Prøv også med et eksponentielt midlingsfilter. Eksperimenter med
-%   alfa værdien prøv f.eks. at sætte meget lavt/højt. Hvad er betydningen
-%   af alfa værdien, således at i får samme støj-reduktion, som jeres 100.
+%   3. PrÃ¸v ogsÃ¥ med et eksponentielt midlingsfilter. Eksperimenter med
+%   alfa vÃ¦rdien prÃ¸v f.eks. at sÃ¦tte meget lavt/hÃ¸jt. Hvad er betydningen
+%   af alfa vÃ¦rdien, sÃ¥ledes at i fÃ¥r samme stÃ¸j-reduktion, som jeres 100.
 %   ordens FIR midlings filter
-alpha_1 = 2/(M1+1);         %   Lille alfa værdi med M=10
-alpha_2 = 2/(M3+1);         %   Stort alfa værdi med M=100
+alpha_1 = 2/(M1+1);         %   Stort alfa vÃ¦rdi med M=10
+alpha_2 = 2/(M3+1);         %   Lille alfa vÃ¦rdi med M=100
 b1 = alpha_1;               %   b koefficient med M=10
 b2 = alpha_2;               %   b koefficient med M=100
 a1 = [1 -(1-alpha_1)];      %   a koefficient med M=10
@@ -174,15 +174,15 @@ alpha = 2/(damping_ubelastet+1);
 M = round((2/alpha)-1);
 var_in = var(x_ubelastet_data(M:N_ubelastet_data));
 var_out = var_in*alpha/(2-alpha);
-fprintf('\nBemærk! Samme støjreduktion for MA filter med M=100\n');
-fprintf('Reduktion i støjeffekt, ubelastet: %.2f\n', var_in/var_out);
+fprintf('\nBemÃ¦rk! Samme stÃ¸jreduktion for MA filter med M=100\n');
+fprintf('Reduktion i stÃ¸jeffekt, ubelastet: %.2f\n', var_in/var_out);
 
 alpha = 2/(damping_belastet+1);
 M = round((2/alpha)-1);
 var_in = var(x_belastet_data(M:N_belastet_data));
 var_out = var_in*alpha/(2-alpha);
-fprintf('\nBemærk! Samme støjreduktion for MA filter med M=100\n');
-fprintf('Reduktion i støjeffekt, belastet: %.2f\n', var_in/var_out);
+fprintf('\nBemÃ¦rk! Samme stÃ¸jreduktion for MA filter med M=100\n');
+fprintf('Reduktion i stÃ¸jeffekt, belastet: %.2f\n', var_in/var_out);
 
 b = alpha;
 a = [1 -(1-alpha)];
